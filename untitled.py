@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import re
 
 # Function to read and combine all uploaded Excel files into a single DataFrame
 def read_excel_files(uploaded_files):
@@ -23,6 +24,13 @@ def filter_data(df, column, value):
         return df[df[column].astype(str).str.contains(value, case=False, na=False)]
     return df
 
+# Function to extract first two alphabetic characters from ID
+def extract_alphabetic_prefix(id_value):
+    # Extract only alphabetic characters
+    letters = re.findall(r'[A-Za-z]', str(id_value))
+    # Return the first two alphabetic characters
+    return ''.join(letters[:2]).upper()
+
 # Main function to create the Streamlit app
 def main():
     # Add the logo to the sidebar
@@ -41,7 +49,7 @@ def main():
 
         # Create a dropdown for ID prefixes if 'ID' column exists
         if 'ID' in cleaned_df.columns:
-            cleaned_df['ID_prefix'] = cleaned_df['ID'].astype(str).str[:2]
+            cleaned_df['ID_prefix'] = cleaned_df['ID'].apply(extract_alphabetic_prefix)
             id_prefixes = cleaned_df['ID_prefix'].dropna().unique()
             selected_prefix = st.sidebar.selectbox("Select ID Prefix", options=['All'] + list(id_prefixes))
             if selected_prefix != 'All':
