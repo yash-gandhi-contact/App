@@ -1,5 +1,10 @@
+import os
+import shutil
 import pandas as pd
 import streamlit as st
+
+# Path to the specific folder with the files
+FILE_FOLDER = "Z:/EUPD/EUPD_Energy/03_Colleagues/Yash/file"
 
 # Function to read and combine all uploaded Excel files into a single DataFrame
 def read_excel_files(uploaded_files):
@@ -23,6 +28,11 @@ def filter_data(df, column, value):
         return df[df[column].astype(str).str.contains(value, case=False, na=False)]
     return df
 
+# Function to get Excel files from the specific folder
+def get_files_from_folder(folder_path):
+    files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith(('.xlsx', '.xls'))]
+    return files
+
 # Main function to create the Streamlit app
 def main():
     # Add the logo to the sidebar
@@ -34,6 +44,15 @@ def main():
 
     # Upload multiple files
     uploaded_files = st.sidebar.file_uploader("Upload your Excel files", type=['xlsx', 'xls'], accept_multiple_files=True)
+
+    # Button to upload files from the specific folder
+    if st.sidebar.button('Upload Files from Folder'):
+        files_from_folder = get_files_from_folder(FILE_FOLDER)
+        uploaded_files = [open(file, 'rb') for file in files_from_folder]  # Open files for uploading
+        if uploaded_files:
+            st.sidebar.success(f"Successfully loaded {len(uploaded_files)} file(s) from folder.")
+        else:
+            st.sidebar.error("No Excel files found in the specified folder.")
 
     if uploaded_files:
         combined_df = read_excel_files(uploaded_files)
