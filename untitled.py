@@ -1,10 +1,14 @@
 import pandas as pd
 import streamlit as st
 
-# Function to read the uploaded Excel file
-def read_uploaded_file(uploaded_file):
-    df = pd.read_excel(uploaded_file)
-    return df
+# Function to read and combine all uploaded Excel files into a single DataFrame
+def read_excel_files(uploaded_files):
+    dataframes = []
+    for uploaded_file in uploaded_files:
+        df = pd.read_excel(uploaded_file)
+        dataframes.append(df)
+    combined_df = pd.concat(dataframes, ignore_index=True)
+    return combined_df
 
 # Function to clean data by ensuring consistent column data types
 def clean_data(df):
@@ -28,11 +32,11 @@ def main():
     # Smaller title using markdown
     st.markdown("<h2 style='text-align: center;'>Dynamic Excel Data Query Dashboard</h2>", unsafe_allow_html=True)
 
-    # Upload file widget
-    uploaded_file = st.sidebar.file_uploader("Upload your Excel file", type=['xlsx', 'xls'])
+    # Upload multiple files
+    uploaded_files = st.sidebar.file_uploader("Upload your Excel files", type=['xlsx', 'xls'], accept_multiple_files=True)
 
-    if uploaded_file is not None:
-        combined_df = read_uploaded_file(uploaded_file)
+    if uploaded_files:
+        combined_df = read_excel_files(uploaded_files)
         cleaned_df = clean_data(combined_df)
 
         # Create a dropdown for ID prefixes if 'ID' column exists
@@ -77,7 +81,7 @@ def main():
         """, unsafe_allow_html=True)
 
     else:
-        st.info("Please upload an Excel file to get started.")
+        st.info("Please upload one or more Excel files to get started.")
 
 if __name__ == "__main__":
     main()
