@@ -31,15 +31,8 @@ def extract_alphabetic_prefix(id_value):
     # Return the first two alphabetic characters
     return ''.join(letters[:2]).upper()
 
-# Main function to create the Streamlit app
-def main():
-    # Add the logo to the sidebar
-    logo_url = "https://www.eupd-research.com/wp-content/uploads/2019/09/Logo_EuPD_Research_RGB.png"
-    st.sidebar.image(logo_url, width=200)  # Adjust the width as needed
-
-    # Smaller title using markdown
-    st.markdown("<h2 style='text-align: center;'>Dynamic Excel Data Query Dashboard</h2>", unsafe_allow_html=True)
-
+# Function to render the data query dashboard
+def render_data_query_dashboard():
     # Upload multiple files
     uploaded_files = st.sidebar.file_uploader("Upload your Excel files", type=['xlsx', 'xls'], accept_multiple_files=True)
 
@@ -90,6 +83,54 @@ def main():
 
     else:
         st.info("Please upload one or more Excel files to get started.")
+
+# Function to render the update entries page
+def render_update_entries_page():
+    st.sidebar.header("Update Entries")
+
+    # Upload files for the old and latest Excel
+    old_excel = st.sidebar.file_uploader("Upload Old Excel", type=['xlsx', 'xls'], key='old_excel')
+    latest_excel = st.sidebar.file_uploader("Upload Latest Excel", type=['xlsx', 'xls'], key='latest_excel')
+
+    # Display information if both files are uploaded
+    if old_excel and latest_excel:
+        old_df = pd.read_excel(old_excel)
+        latest_df = pd.read_excel(latest_excel)
+
+        # Perform any comparison or update logic here
+
+        st.subheader("Old Excel Data")
+        st.dataframe(old_df, use_container_width=True)
+
+        st.subheader("Latest Excel Data")
+        st.dataframe(latest_df, use_container_width=True)
+
+        # Example: Display message about updating
+        st.success("Both Excel files have been uploaded. Proceed with your update logic here.")
+
+    elif not old_excel:
+        st.info("Please upload the Old Excel file.")
+    elif not latest_excel:
+        st.info("Please upload the Latest Excel file.")
+
+# Main function to create the Streamlit app
+def main():
+    # Add the logo to the sidebar
+    logo_url = "https://www.eupd-research.com/wp-content/uploads/2019/09/Logo_EuPD_Research_RGB.png"
+    st.sidebar.image(logo_url, width=200)  # Adjust the width as needed
+
+    # Sidebar navigation for multiple pages
+    st.sidebar.title("Navigation")
+    page_selection = st.sidebar.radio("Go to", ["Dynamic Excel Data Query", "Update Entries"])
+
+    # Render the selected page
+    if page_selection == "Dynamic Excel Data Query":
+        # Smaller title using markdown
+        st.markdown("<h2 style='text-align: center;'>Dynamic Excel Data Query Dashboard</h2>", unsafe_allow_html=True)
+        render_data_query_dashboard()
+    elif page_selection == "Update Entries":
+        st.markdown("<h2 style='text-align: center;'>Update Entries</h2>", unsafe_allow_html=True)
+        render_update_entries_page()
 
 if __name__ == "__main__":
     main()
