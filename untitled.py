@@ -180,7 +180,7 @@ def main():
     # Add your name and LinkedIn logo below the main logo
     linkedin_logo_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
     st.sidebar.markdown(f"""
-        <div style='text-align: center; margin-top: 10px;'>
+        <div style='text-align: left; margin-top: 8px;'>
             <small>by Yash Gandhi</small><br>
             <a href='https://www.linkedin.com/in/yash--gandhi/' target='_blank'>
                 <img src='{linkedin_logo_url}' alt='LinkedIn Profile' style='width: 20px; height: 20px;'>
