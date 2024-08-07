@@ -45,11 +45,12 @@ def update_entries(old_df, latest_df, replace_with_empty=False):
     # Update old_df with latest_df's data where IDs match
     for column in latest_df.columns:
         if replace_with_empty:
-            # Update even if the new value is None (NaN)
-            old_df[column] = latest_df[column].combine_first(old_df[column])
+            # Replace with None if latest_df has None
+            old_df[column] = latest_df[column].reindex(old_df.index)
         else:
             # Update only non-NA values
-            old_df[column].update(latest_df[column])
+            non_na_mask = latest_df[column].notna()
+            old_df.loc[non_na_mask, column] = latest_df.loc[non_na_mask, column]
 
     # Combine dataframes to include new entries from latest_df
     updated_df = latest_df.combine_first(old_df)
