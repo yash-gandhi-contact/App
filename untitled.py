@@ -228,4 +228,18 @@ def main():
         <div style='text-align: center; margin-top: 10px;'>
             <small>by Yash Gandhi</small><br>
             <a href='https://www.linkedin.com/in/yash--gandhi/' target='_blank'>
-                <img src='{linkedin_logo_url}' alt='
+                <img src='{linkedin_logo_url}' alt='LinkedIn Profile' style='width: 20px; height: 20px;'>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Choose the page to display
+    page = st.sidebar.selectbox("Choose a page", ["Data Query Dashboard", "Update Entries"])
+
+    if page == "Data Query Dashboard":
+        render_data_query_dashboard()
+    elif page == "Update Entries":
+        render_update_entries_page()
+
+if __name__ == "__main__":
+    main()
