@@ -31,6 +31,25 @@ def extract_alphabetic_prefix(id_value):
     # Return the first two alphabetic characters
     return ''.join(letters[:2]).upper()
 
+# Function to update entries based on primary key ID
+def update_entries(old_df, latest_df):
+    # Ensure 'ID' column is in both DataFrames
+    if 'ID' not in old_df.columns or 'ID' not in latest_df.columns:
+        st.error("Both files must contain an 'ID' column to perform updates.")
+        return old_df
+
+    # Set 'ID' as the index for easier comparison
+    old_df.set_index('ID', inplace=True)
+    latest_df.set_index('ID', inplace=True)
+
+    # Update old_df with latest_df's data where IDs match
+    updated_df = old_df.combine_first(latest_df)
+
+    # Reset index to bring 'ID' back as a column
+    updated_df.reset_index(inplace=True)
+
+    return updated_df
+
 # Function to render the data query dashboard
 def render_data_query_dashboard():
     # Upload multiple files
@@ -97,21 +116,31 @@ def render_update_entries_page():
         old_df = pd.read_excel(old_excel)
         latest_df = pd.read_excel(latest_excel)
 
-        # Perform any comparison or update logic here
+        # Update entries in old_df based on latest_df
+        updated_df = update_entries(old_df, latest_df)
 
-        st.subheader("Old Excel Data")
-        st.dataframe(old_df, use_container_width=True)
+        st.subheader("Updated Data")
+        st.dataframe(updated_df, use_container_width=True)
 
-        st.subheader("Latest Excel Data")
-        st.dataframe(latest_df, use_container_width=True)
-
-        # Example: Display message about updating
-        st.success("Both Excel files have been uploaded. Proceed with your update logic here.")
+        # Option to download the updated DataFrame as an Excel file
+        download_excel(updated_df, "updated_data.xlsx")
 
     elif not old_excel:
         st.info("Please upload the Old Excel file.")
     elif not latest_excel:
         st.info("Please upload the Latest Excel file.")
+
+# Function to download a DataFrame as an Excel file
+def download_excel(df, file_name):
+    output = pd.ExcelWriter(file_name, engine='xlsxwriter')
+    df.to_excel(output, index=False, sheet_name='Updated Data')
+    output.save()
+    st.download_button(
+        label="Download Updated Excel",
+        data=output,
+        file_name=file_name,
+        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 
 # Main function to create the Streamlit app
 def main():
