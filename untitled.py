@@ -43,7 +43,10 @@ def update_entries(old_df, latest_df):
     latest_df.set_index('ID', inplace=True)
 
     # Update old_df with latest_df's data where IDs match
-    updated_df = old_df.combine_first(latest_df)
+    old_df.update(latest_df)
+
+    # Combine dataframes to include new entries from latest_df
+    updated_df = latest_df.combine_first(old_df)
 
     # Reset index to bring 'ID' back as a column
     updated_df.reset_index(inplace=True)
