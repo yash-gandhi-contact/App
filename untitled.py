@@ -177,6 +177,17 @@ def main():
     logo_url = "https://www.eupd-research.com/wp-content/uploads/2019/09/Logo_EuPD_Research_RGB.png"
     st.sidebar.image(logo_url, width=200)  # Adjust the width as needed
 
+    # Add your name and LinkedIn logo below the main logo
+    linkedin_logo_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
+    st.sidebar.markdown(f"""
+        <div style='text-align: center; margin-top: 10px;'>
+            <small>by Yash Gandhi</small><br>
+            <a href='https://www.linkedin.com/in/yash--gandhi/' target='_blank'>
+                <img src='{linkedin_logo_url}' alt='LinkedIn Profile' style='width: 20px; height: 20px;'>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+
     # Sidebar navigation for multiple pages
     st.sidebar.title("Navigation")
     page_selection = st.sidebar.radio("Go to", ["Dynamic Excel Data Query", "Update Entries"])
