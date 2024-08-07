@@ -132,12 +132,21 @@ def render_update_entries_page():
 
 # Function to download a DataFrame as an Excel file
 def download_excel(df, file_name):
-    output = pd.ExcelWriter(file_name, engine='xlsxwriter')
-    df.to_excel(output, index=False, sheet_name='Updated Data')
-    output.save()
+    import io
+
+    # Use a BytesIO buffer instead of writing to disk
+    buffer = io.BytesIO()
+
+    # Write the DataFrame to an Excel file using the buffer
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Updated Data')
+
+    # Get the Excel data from the buffer
+    buffer.seek(0)
+    
     st.download_button(
         label="Download Updated Excel",
-        data=output,
+        data=buffer,
         file_name=file_name,
         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
