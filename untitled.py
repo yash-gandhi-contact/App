@@ -89,40 +89,26 @@ def render_data_query_dashboard():
         else:
             filtered_data = cleaned_df
 
-        # Display the filtered data with enhanced styling
+        # Display the filtered data in full-screen and styled
         st.subheader("Filtered Data")
+        st.dataframe(filtered_data, use_container_width=True)
+
+        # Additional styling with CSS
         st.markdown("""
             <style>
-            .styled-table {
-                border-collapse: collapse;
-                margin: 25px 0;
-                font-size: 0.9em;
-                font-family: 'Arial', sans-serif;
-                width: 100%;
-                overflow: hidden;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            .dataframe tbody tr:hover {
+                background-color: #f5f5f5;
             }
-            .styled-table thead tr {
-                background-color: #009879;
-                color: #ffffff;
-                text-align: left;
+            .dataframe thead th {
+                background-color: #007bff;
+                color: white;
             }
-            .styled-table th,
-            .styled-table td {
-                padding: 12px 15px;
-            }
-            .styled-table tbody tr {
-                border-bottom: 1px solid #dddddd;
-            }
-            .styled-table tbody tr:nth-of-type(even) {
-                background-color: #f3f3f3;
-            }
-            .styled-table tbody tr:last-of-type {
-                border-bottom: 2px solid #009879;
+            .dataframe td, .dataframe th {
+                text-align: center;
+                padding: 10px;
             }
             </style>
         """, unsafe_allow_html=True)
-        st.markdown(filtered_data.to_html(index=False, classes='styled-table'), unsafe_allow_html=True)
 
     else:
         st.info("Please upload one or more Excel files to get started.")
@@ -154,38 +140,7 @@ def render_update_entries_page():
         updated_df = update_entries(old_df, latest_df, replace_with_empty=replace_with_empty)
 
         st.subheader("Updated Data")
-        st.markdown("""
-            <style>
-            .styled-table {
-                border-collapse: collapse;
-                margin: 25px 0;
-                font-size: 0.9em;
-                font-family: 'Arial', sans-serif;
-                width: 100%;
-                overflow: hidden;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            }
-            .styled-table thead tr {
-                background-color: #009879;
-                color: #ffffff;
-                text-align: left;
-            }
-            .styled-table th,
-            .styled-table td {
-                padding: 12px 15px;
-            }
-            .styled-table tbody tr {
-                border-bottom: 1px solid #dddddd;
-            }
-            .styled-table tbody tr:nth-of-type(even) {
-                background-color: #f3f3f3;
-            }
-            .styled-table tbody tr:last-of-type {
-                border-bottom: 2px solid #009879;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        st.markdown(updated_df.to_html(index=False, classes='styled-table'), unsafe_allow_html=True)
+        st.dataframe(updated_df, use_container_width=True)
 
         # Option to download the updated DataFrame as an Excel file
         download_excel(updated_df, "updated_data.xlsx")
@@ -222,23 +177,17 @@ def main():
     logo_url = "https://www.eupd-research.com/wp-content/uploads/2019/09/Logo_EuPD_Research_RGB.png"
     st.sidebar.image(logo_url, width=200)  # Adjust the width as needed
 
-    # Add your name and LinkedIn logo below the main logo
-    linkedin_logo_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
-    st.sidebar.markdown(f"""
-        <div style='text-align: center; margin-top: 10px;'>
-            <small>by Yash Gandhi</small><br>
-            <a href='https://www.linkedin.com/in/yash--gandhi/' target='_blank'>
-                <img src='{linkedin_logo_url}' alt='LinkedIn Profile' style='width: 20px; height: 20px;'>
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
+    # Sidebar navigation for multiple pages
+    st.sidebar.title("Navigation")
+    page_selection = st.sidebar.radio("Go to", ["Dynamic Excel Data Query", "Update Entries"])
 
-    # Choose the page to display
-    page = st.sidebar.selectbox("Choose a page", ["Data Query Dashboard", "Update Entries"])
-
-    if page == "Data Query Dashboard":
+    # Render the selected page
+    if page_selection == "Dynamic Excel Data Query":
+        # Smaller title using markdown
+        st.markdown("<h2 style='text-align: center;'>Dynamic Excel Data Query Dashboard</h2>", unsafe_allow_html=True)
         render_data_query_dashboard()
-    elif page == "Update Entries":
+    elif page_selection == "Update Entries":
+        st.markdown("<h2 style='text-align: center;'>Update Entries</h2>", unsafe_allow_html=True)
         render_update_entries_page()
 
 if __name__ == "__main__":
